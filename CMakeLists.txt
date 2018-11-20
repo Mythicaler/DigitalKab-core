@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 2.8.6)
 
 set(VERSION "0.1")
-# Packaged from commit 296ae46ed8f8f6e5f986f978febad302e3df231a
-set(COMMIT 296ae46)
+# Packaged from commit 8efa1313f3614f34ac0bac947314bb53e9a2412b
+set(COMMIT 8efa131)
 set(REFS "")
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -67,12 +67,7 @@ else()
   set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} ${RELEASE_FLAGS}")
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${RELEASE_FLAGS}")
   if(STATIC)
-    set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static")
-    function(add_executable name)
-      _add_executable("${name}" ${ARGN})
-      set_target_properties("${name}" PROPERTIES LINK_SEARCH_START_STATIC ON LINK_SEARCH_END_STATIC ON)
-    endfunction()
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static-libgcc -static-libstdc++")
   endif()
 endif()
 
@@ -87,6 +82,8 @@ endif()
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 if(MINGW)
   set(Boost_LIBRARIES "${Boost_LIBRARIES};ws2_32;mswsock")
+elseif(NOT MSVC)
+  set(Boost_LIBRARIES "${Boost_LIBRARIES};rt")
 endif()
 
 set(COMMIT_ID_IN_VERSION ON CACHE BOOL "Include commit ID in version")
