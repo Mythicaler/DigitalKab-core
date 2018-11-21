@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 2.8.6)
 
 set(VERSION "0.1")
-# Packaged from commit 29c2859a3e8a935ef605534c6c36333894980d50
-set(COMMIT 29c2859)
+# Packaged from commit a401a02ddb3fb045d998cf650292cab3b3ebfd58
+set(COMMIT a401a02)
 set(REFS "")
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -101,9 +101,11 @@ elseif(DEFINED COMMIT)
   add_custom_target(version ALL)
 else()
   find_package(Git QUIET)
-  if(Git_FOUND)
+  if(Git_FOUND OR GIT_FOUND)
+    message(STATUS "Found Git: ${GIT_EXECUTABLE}")
     add_custom_target(version ALL "${CMAKE_COMMAND}" "-D" "VERSION=${VERSION}" "-D" "GIT=${GIT_EXECUTABLE}" "-D" "TO=${CMAKE_BINARY_DIR}/version/version.h" "-P" "src/version.cmake" WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
   else()
+    message(STATUS "WARNING: Git was not found!")
     set(VERSION "${VERSION}-unknown")
     configure_file("src/version.h.in" "version/version.h")
     add_custom_target(version ALL)
