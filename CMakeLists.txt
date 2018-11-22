@@ -1,15 +1,15 @@
 cmake_minimum_required(VERSION 2.8.6)
 
 set(VERSION "0.1")
-# Packaged from commit a401a02ddb3fb045d998cf650292cab3b3ebfd58
-set(COMMIT a401a02)
+# Packaged from commit 9682a15400495ae490543e7e5af242ff5c4c9fa0
+set(COMMIT 9682a15)
 set(REFS "")
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release")
 enable_testing()
 
-include_directories(src contrib/epee/include "${CMAKE_BINARY_DIR}/version")
+include_directories(src contrib/epee/include external "${CMAKE_BINARY_DIR}/version")
 
 set(STATIC ${MSVC} CACHE BOOL "Link libraries statically")
 
@@ -112,5 +112,6 @@ else()
   endif()
 endif()
 
+add_subdirectory(external)
 add_subdirectory(src)
 add_subdirectory(tests)
