@@ -1,23 +1,24 @@
 cmake_minimum_required(VERSION 2.8.6)
 
 set(VERSION "0.1")
-# Packaged from commit 3742cce0a9c4aab45fb52c911ad6dd6328d6077d
-set(COMMIT 3742cce)
+# Packaged from commit c9be94260335d62a36359daea743ccb5ee81de5f
+set(COMMIT c9be942)
 set(REFS "")
+
+function(set_static_flags)
+if (NOT APPLE)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static-libgcc -static-libstdc++")
+endif()
+endfunction(set_static_flags)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release")
 enable_testing()
 
-function(set_static_flags)
-  if (NOT APPLE)
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static-libgcc -static-libstdc++")
-  endif()
-endfunction(set_static_flags)
-
 include_directories(src contrib/epee/include external "${CMAKE_BINARY_DIR}/version")
+
 if(APPLE)
-  include_directories(SYSTEM /usr/include/malloc)
+include_directories(SYSTEM /usr/include/malloc)
 endif()
 
 set(STATIC ${MSVC} CACHE BOOL "Link libraries statically")
@@ -62,9 +63,6 @@ else()
   endif()
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -D_GNU_SOURCE ${MINGW_FLAG} ${STATIC_ASSERT_FLAG} ${WARNINGS} ${C_WARNINGS} ${ARCH_FLAG}")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -D_GNU_SOURCE ${MINGW_FLAG} ${WARNINGS} ${CXX_WARNINGS} ${ARCH_FLAG}")
-  if(APPLE)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGTEST_HAS_TR1_TUPLE=0")
-  endif()
   if(CMAKE_C_COMPILER_ID STREQUAL "GNU" AND NOT (CMAKE_C_COMPILER_VERSION VERSION_LESS 4.8))
     set(DEBUG_FLAGS "-g3 -Og")
   else()
@@ -94,10 +92,8 @@ endif()
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 if(MINGW)
   set(Boost_LIBRARIES "${Boost_LIBRARIES};ws2_32;mswsock")
-elseif(APPLE)
-  set(Boost_LIBRARIES "${Boost_LIBRARIES}")
 elseif(NOT MSVC)
-  set(Boost_LIBRARIES "${Boost_LIBRARIES};rt")
+  set(Boost_LIBRARIES "${Boost_LIBRARIES}")
 endif()
 
 set(COMMIT_ID_IN_VERSION ON CACHE BOOL "Include commit ID in version")

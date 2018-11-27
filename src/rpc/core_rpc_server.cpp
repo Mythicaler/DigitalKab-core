@@ -251,7 +251,10 @@ namespace cryptonote
       return true;
     }
 
-    if(!m_core.get_miner().start(adr, static_cast<size_t>(req.threads_count)))
+    boost::thread::attributes attrs;
+    attrs.set_stack_size(THREAD_STACK_SIZE);
+
+    if(!m_core.get_miner().start(adr, static_cast<size_t>(req.threads_count), attrs))
     {
       res.status = "Failed, mining not started";
       return true;
@@ -355,7 +358,8 @@ namespace cryptonote
       return false;
     }
     blobdata block_blob = t_serializable_object_to_blob(b);
-    crypto::public_key tx_pub_key = cryptonote::get_tx_pub_key_from_extra(b.miner_tx);
+    crypto::public_key tx_pub_key = null_pkey;
+    cryptonote::parse_and_validate_tx_extra(b.miner_tx, tx_pub_key);
     if(tx_pub_key == null_pkey)
     {
       error_resp.code = CORE_RPC_ERROR_CODE_INTERNAL_ERROR;

@@ -141,9 +141,6 @@ namespace cryptonote
       uint64_t operator()(const txin_to_scripthash& tx) const {return 0;}
     };
 
-#if defined(DEBUG_CREATE_BLOCK_TEMPLATE)
-    friend class blockchain_storage;
-#endif
   };
 }
 

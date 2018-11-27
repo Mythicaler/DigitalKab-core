@@ -122,7 +122,7 @@ namespace serialization {
       {
         std::ios_base::iostate state = s.rdstate();
         result = EOF == s.peek();
-        s.clear(state);
+        s.setstate(state);
       }
       return result;
     }
