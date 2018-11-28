@@ -32,7 +32,6 @@
 //#include <objbase.h>
 #include <locale>
 #include <cstdlib>
-#include <iomanip>
 //#include <strsafe.h>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_io.hpp>

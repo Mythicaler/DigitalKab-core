@@ -25,9 +25,6 @@
 // 
 
 #pragma once
-
-#include <string>
-
 #include "parserse_base_utils.h"
 #include "portable_storage.h"
 #include "file_io_utils.h"
@@ -59,19 +56,19 @@ namespace epee
     }
     //-----------------------------------------------------------------------------------------------------------
     template<class t_struct>
-    bool store_t_to_json(t_struct& str_in, std::string& json_buff, size_t indent = 0, bool insert_newlines = true)
+    bool store_t_to_json(t_struct& str_in, std::string& json_buff, size_t indent = 0)
     {
       portable_storage ps;
       str_in.store(ps);
-      ps.dump_as_json(json_buff, indent, insert_newlines);
+      ps.dump_as_json(json_buff, indent);
       return true;
     }
     //-----------------------------------------------------------------------------------------------------------
     template<class t_struct>
-    std::string store_t_to_json(t_struct& str_in, size_t indent = 0, bool insert_newlines = true)
+    std::string store_t_to_json(t_struct& str_in, size_t indent = 0)
     {
       std::string json_buff;
-      store_t_to_json(str_in, json_buff, indent, insert_newlines);
+      store_t_to_json(str_in, json_buff, indent);
       return std::move(json_buff);
     }
     //-----------------------------------------------------------------------------------------------------------
