@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 2.8.6)
 
 set(VERSION "0.1")
-# Packaged from commit 30b4c344994c253715840c3f9d2fcc821315d4df
-set(COMMIT 30b4c34)
-set(REFS "")
+# Packaged from commit 2b8558a48f11ced67c1f184ffe335428d53b6b28
+set(COMMIT 2b8558a)
+set(REFS " (tag: v0.8.9)")
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release")
