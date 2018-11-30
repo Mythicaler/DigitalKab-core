@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 2.8.6)
 
 set(VERSION "0.1")
-# Packaged from commit 626f2579285a4710351335eccf164e0cf0ffaae1
-set(COMMIT 626f257)
+# Packaged from commit 850634b962d93bd911be8c5e55581dd3d3cdf7d3
+set(COMMIT 850634b)
 set(REFS "")
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -64,7 +64,11 @@ else()
   else()
     set(DEBUG_FLAGS "-g3 -O0")
   endif()
-  set(RELEASE_FLAGS "-Ofast -DNDEBUG -Wno-unused-variable -flto")
+  set(RELEASE_FLAGS "-Ofast -DNDEBUG -Wno-unused-variable")
+  if(NOT APPLE)
+    # There is a clang bug that does not allow to compile code that uses AES-NI intrinsics if -flto is enabled
+    set(RELEASE_FLAGS "${RELEASE_FLAGS} -flto")
+  endif()
   #if(CMAKE_C_COMPILER_ID STREQUAL "GNU" AND NOT MINGW)
   #  set(RELEASE_FLAGS "${RELEASE_FLAGS} -fno-fat-lto-objects")
   #endif()
