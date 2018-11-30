@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 2.8.6)
 
 set(VERSION "0.1")
-# Packaged from commit b3e2face1ed91c9ab6bf0c8c9fd8057951697c38
-set(COMMIT b3e2fac)
+# Packaged from commit 626f2579285a4710351335eccf164e0cf0ffaae1
+set(COMMIT 626f257)
 set(REFS "")
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
