@@ -131,7 +131,7 @@ namespace cryptonote
     epee::console_handlers_binder m_cmd_binder;
 
     std::unique_ptr<tools::wallet2> m_wallet;
-    epee::net_utils::http::http_simple_client m_http_client;
+    net_utils::http::http_simple_client m_http_client;
     refresh_progress_reporter_t m_refresh_progress_reporter;
   };
 }
