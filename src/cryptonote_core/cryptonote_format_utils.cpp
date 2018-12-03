@@ -69,7 +69,7 @@ namespace cryptonote
     in.height = height;
 
     uint64_t block_reward;
-    if(!get_block_reward(median_size, current_block_size, already_generated_coins, height, block_reward))
+    if(!get_block_reward(median_size, current_block_size, already_generated_coins, block_reward))
     {
       LOG_PRINT_L0("Block is too big");
       return false;
@@ -591,18 +591,23 @@ namespace cryptonote
     return get_object_hash(t, res, blob_size);
   }
   //---------------------------------------------------------------
-  blobdata get_block_hashing_blob(const block& b)
+  bool get_block_hashing_blob(const block& b, blobdata& blob)
   {
-    blobdata blob = t_serializable_object_to_blob(static_cast<block_header>(b));
+    if(!t_serializable_object_to_blob(static_cast<const block_header&>(b), blob))
+      return false;
     crypto::hash tree_root_hash = get_tx_tree_hash(b);
-    blob.append((const char*)&tree_root_hash, sizeof(tree_root_hash ));
-    blob.append(tools::get_varint_data(b.tx_hashes.size()+1));
-    return blob;
+    blob.append(reinterpret_cast<const char*>(&tree_root_hash), sizeof(tree_root_hash));
+    blob.append(tools::get_varint_data(b.tx_hashes.size() + 1));
+
+    return true;
   }
   //---------------------------------------------------------------
   bool get_block_hash(const block& b, crypto::hash& res)
   {
-    return get_object_hash(get_block_hashing_blob(b), res);
+    blobdata blob;
+    if (!get_block_hashing_blob(b, blob))
+      return false;
+    return get_object_hash(blob, res);
   }
   //---------------------------------------------------------------
   crypto::hash get_block_hash(const block& b)
@@ -617,13 +622,15 @@ namespace cryptonote
     //genesis block
     bl = boost::value_initialized<block>();
 
-    //account_public_address ac = boost::value_initialized<account_public_address>();
-    //construct_miner_tx(0, 0, 0, 0, 0, ac, bl.miner_tx); // zero fee in genesis
-    //blobdata txb = tx_to_blob(bl.miner_tx);
-    //std::string hex_tx_represent = string_tools::buff_to_hex_nodelimer(txb);
+
+    account_public_address ac = boost::value_initialized<account_public_address>();
+    std::vector<size_t> sz;
+    construct_miner_tx(0, 0, 0, 0, 0, ac, bl.miner_tx); // zero fee in genesis
+    blobdata txb = tx_to_blob(bl.miner_tx);
+    std::string hex_tx_represent = string_tools::buff_to_hex_nodelimer(txb);
 
     //hard code coinbase tx in genesis block, because "tru" generating tx use random, but genesis should be always the same
-    std::string genesis_coinbase_tx_hex = "010601ff0001808088a5a9a307029b2e4c0281c0b02e7c53291a94d1d0cbff8883f8024f5142ee494ffbbd088071210138dc57b313e2560fa75f5d7c9a6398800855220aefb3603bc70826adc83e0cc1";
+    std::string genesis_coinbase_tx_hex = "010a01ff0001ffffffffffff0f029b2e4c0281c0b02e7c53291a94d1d0cbff8883f8024f5142ee494ffbbd08807121013c086a48c15fb637a96991bc6d53caf77068b5ba6eeb3c82357228c49790584a";
 
     blobdata tx_bl;
     string_tools::parse_hexstr_to_binbuff(genesis_coinbase_tx_hex, tx_bl);
@@ -632,15 +639,16 @@ namespace cryptonote
     bl.major_version = CURRENT_BLOCK_MAJOR_VERSION;
     bl.minor_version = CURRENT_BLOCK_MINOR_VERSION;
     bl.timestamp = 0;
-    bl.nonce = 420;
+    bl.nonce = 70;
     miner::find_nonce_for_given_block(bl, 1, 0);
     return true;
   }
   //---------------------------------------------------------------
   bool get_block_longhash(const block& b, crypto::hash& res, uint64_t height)
   {
-    block b_local = b; //workaround to avoid const errors with do_serialize
-    blobdata bd = get_block_hashing_blob(b);
+    blobdata bd;
+    if(!get_block_hashing_blob(b, bd))
+      return false;
     crypto::cn_slow_hash(bd.data(), bd.size(), res);
     return true;
   }
